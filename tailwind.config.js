@@ -4,7 +4,6 @@ export default {
   theme: {
     extend: {
       colors: {
-        "rich-white": "#E3FFFA",
         "rich-dark-purple": "#354A7B",
         "rich-purple": "#6581D4",
         "rich-dark-red": "#310101",
