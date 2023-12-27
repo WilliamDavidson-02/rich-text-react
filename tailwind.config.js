@@ -3,6 +3,10 @@ export default {
   content: ["./index.html", "./src/**/*.{js,ts,jsx,tsx}"],
   theme: {
     extend: {
+      backgroundImage: {
+        "green-glow-radial":
+          "radial-gradient(farthest-corner, #22796F, #01312B)",
+      },
       colors: {
         "rich-dark-purple": "#354A7B",
         "rich-purple": "#6581D4",

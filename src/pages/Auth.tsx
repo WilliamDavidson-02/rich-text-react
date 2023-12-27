@@ -1,10 +1,13 @@
-import { FormEvent, useState } from "react";
+import { FormEvent, useEffect, useState } from "react";
 import MainContainer from "../components/MainContainer";
 import TextInput from "../components/TextInput";
 import PasswordInput from "../components/PasswordInput";
 import SubmitBtnGreen from "../components/SubmitBtnGreen";
 import { z } from "zod";
 import { toast } from "sonner";
+import GreenGlowContainer from "../components/GreenGlowContainer";
+import supabase, { AuthProviders } from "../supabase/supabaseClient";
+import { useNavigate } from "react-router-dom";
 
 const nameSchema = z.string().min(2);
 const emailSchema = z.string().email();
@@ -26,6 +29,7 @@ export default function Auth() {
     password: "",
   });
   const [formType, setFormType] = useState<"signIn" | "signUp">("signIn");
+  const navigate = useNavigate();
 
   const validateForm = () => {
     const invalidFields: string[] = [];
@@ -51,18 +55,63 @@ export default function Auth() {
     return invalidFields;
   };
 
-  const submitForm = (ev: FormEvent) => {
+  const formatFullName = (firstName: string, lastName: string) => {
+    const nameArray: string[] = [firstName, lastName];
+
+    nameArray.map((name) => {
+      const splitName = name.split("");
+      splitName[0].toUpperCase();
+      return splitName.join();
+    });
+
+    return nameArray.join(" ");
+  };
+
+  const submitForm = async (ev: FormEvent) => {
     ev.preventDefault();
     const invalidFields = validateForm();
     if (invalidFields.length > 0) {
       toast.error(`Invalid form please check ${invalidFields.join(", ")}`);
       return;
     }
-    const submittedForm =
+
+    const { email, password, firstName, lastName } = form;
+
+    const { error } =
       formType === "signIn"
-        ? { email: form.email, password: form.password }
-        : form;
-    console.log(submittedForm);
+        ? await supabase.auth.signInWithPassword({ email, password })
+        : await supabase.auth.signUp({
+            email,
+            password,
+            options: {
+              data: {
+                full_name: formatFullName(firstName.trim(), lastName.trim()),
+                avatar_url: "",
+              },
+            },
+          });
+
+    if (error) {
+      toast.error(error.message);
+      return;
+    }
+
+    navigate("/");
+  };
+
+  const submitWithAuthProvider = async (providerType: AuthProviders) => {
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider: providerType,
+    });
+
+    if (error) {
+      toast.error(
+        `Error while signing in with ${providerType}, please try again`,
+      );
+      return;
+    }
+
+    navigate("/");
   };
 
   return (
@@ -72,6 +121,23 @@ export default function Auth() {
           className="flex w-full max-w-[600px] flex-col gap-4"
           onSubmit={submitForm}
         >
+          <div className="flex gap-4">
+            <GreenGlowContainer
+              onClick={() => submitWithAuthProvider("github")}
+            >
+              <img className="h-6" src="/github_icon.svg" alt="github" />
+            </GreenGlowContainer>
+            <GreenGlowContainer
+              onClick={() => submitWithAuthProvider("google")}
+            >
+              <img className="h-6" src="/google_icon.svg" alt="google" />
+            </GreenGlowContainer>
+          </div>
+          <div className="flex items-center gap-4">
+            <div className="h-[1px] flex-grow bg-zinc-600" />
+            <div className="text-zinc-600">or</div>
+            <div className="h-[1px] flex-grow bg-zinc-600" />
+          </div>
           {formType === "signUp" && (
             <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
               <TextInput
