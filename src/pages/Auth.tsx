@@ -7,6 +7,7 @@ import { z } from "zod";
 import { toast } from "sonner";
 import GreenGlowContainer from "../components/GreenGlowContainer";
 import supabase, { AuthProviders } from "../supabase/supabaseClient";
+import { LoadingSm } from "../components/Loading";
 import { useNavigate } from "react-router-dom";
 
 const nameSchema = z.string().min(2);
@@ -29,6 +30,7 @@ export default function Auth() {
     password: "",
   });
   const [formType, setFormType] = useState<"signIn" | "signUp">("signIn");
+  const [isLoading, setIsLoading] = useState<AuthProviders | "email" | "">("");
   const navigate = useNavigate();
 
   const validateForm = () => {
@@ -75,6 +77,8 @@ export default function Auth() {
       return;
     }
 
+    setIsLoading("email");
+
     const { email, password, firstName, lastName } = form;
 
     const { error } =
@@ -93,6 +97,7 @@ export default function Auth() {
 
     if (error) {
       toast.error(error.message);
+      setIsLoading("");
       return;
     }
 
@@ -100,6 +105,7 @@ export default function Auth() {
   };
 
   const submitWithAuthProvider = async (providerType: AuthProviders) => {
+    setIsLoading(providerType);
     const { error } = await supabase.auth.signInWithOAuth({
       provider: providerType,
     });
@@ -108,10 +114,9 @@ export default function Auth() {
       toast.error(
         `Error while signing in with ${providerType}, please try again`,
       );
+      setIsLoading("");
       return;
     }
-
-    navigate("/");
   };
 
   return (
@@ -125,12 +130,20 @@ export default function Auth() {
             <GreenGlowContainer
               onClick={() => submitWithAuthProvider("github")}
             >
-              <img className="h-6" src="/github_icon.svg" alt="github" />
+              {isLoading === "github" ? (
+                <LoadingSm />
+              ) : (
+                <img className="h-6" src="/github_icon.svg" alt="github" />
+              )}
             </GreenGlowContainer>
             <GreenGlowContainer
-              onClick={() => submitWithAuthProvider("google")}
+              onClick={() => submitWithAuthProvider("discord")}
             >
-              <img className="h-6" src="/google_icon.svg" alt="google" />
+              {isLoading === "discord" ? (
+                <LoadingSm />
+              ) : (
+                <img className="h-6" src="/discord_icon.svg" alt="discord" />
+              )}
             </GreenGlowContainer>
           </div>
           <div className="flex items-center gap-4">
@@ -173,9 +186,13 @@ export default function Auth() {
             schema={passwordSchema}
             errorMsg={`Password must be as least ${passwordLength} characters`}
           />
-          <SubmitBtnGreen
-            text={formType === "signIn" ? "Sign in" : "Sign up"}
-          />
+          <SubmitBtnGreen>
+            {isLoading === "email" ? (
+              <LoadingSm />
+            ) : (
+              <span>{formType === "signIn" ? "Sign in" : "Sign up"}</span>
+            )}
+          </SubmitBtnGreen>
           <div className="text-center">
             {formType === "signIn" ? (
               <span className="text-xs text-black dark:text-zinc-400">

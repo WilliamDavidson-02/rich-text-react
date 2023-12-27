@@ -1,6 +1,6 @@
 import { createClient } from "@supabase/supabase-js";
 
-export type AuthProviders = "github" | "google";
+export type AuthProviders = "github" | "discord";
 
 const url: string = import.meta.env.VITE_SUPABASE_URL;
 const key: string = import.meta.env.VITE_SUPABASE_KEY;

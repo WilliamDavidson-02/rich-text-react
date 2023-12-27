@@ -7,6 +7,7 @@ import {
   useState,
 } from "react";
 import supabase from "../supabase/supabaseClient";
+import { useNavigate } from "react-router-dom";
 
 type UserContextProviderProps = {
   children: ReactNode;
@@ -35,17 +36,12 @@ export default function UserContextProvider({
     avatar_url: "",
     full_name: "",
   });
+  const navigate = useNavigate();
 
   const getUser = async () => {
     const {
       data: { user },
-      error,
     } = await supabase.auth.getUser();
-
-    if (error) {
-      console.error(error);
-      return;
-    }
 
     if (user) {
       const {
@@ -61,6 +57,8 @@ export default function UserContextProvider({
         avatar_url: userAvatar,
         full_name: userName,
       });
+    } else {
+      navigate("/auth");
     }
   };
 
