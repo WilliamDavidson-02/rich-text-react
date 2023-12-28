@@ -1,17 +1,16 @@
-import { ReactNode } from "react";
+import { HTMLAttributes, ReactNode } from "react";
 
-type greenGlowContainerProps = {
+type greenGlowContainerProps = HTMLAttributes<HTMLDivElement> & {
   children: ReactNode;
-  onClick: () => void;
 };
 
 export default function GreenGlowContainer({
   children,
-  onClick,
+  ...props
 }: greenGlowContainerProps) {
   return (
     <div
-      onClick={onClick}
+      {...props}
       className="border-rich-light-green bg-green-glow-radial text-rich-light-green flex flex-grow cursor-pointer items-center justify-center rounded-md border p-2"
     >
       {children}

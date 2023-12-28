@@ -1,4 +1,4 @@
-import { FormEvent, useState } from "react";
+import { FormEvent, useEffect, useState } from "react";
 import MainContainer from "../components/MainContainer";
 import TextInput from "../components/TextInput";
 import PasswordInput from "../components/PasswordInput";
@@ -30,10 +30,15 @@ export default function Auth() {
     password: "",
   });
   const [formType, setFormType] = useState<"signIn" | "signUp">("signIn");
+  const [isFormValid, setIsFormValid] = useState(false);
   const [isLoading, setIsLoading] = useState<AuthProviders | "email" | "">("");
   const navigate = useNavigate();
 
-  const validateForm = () => {
+  useEffect(() => {
+    setIsFormValid(validateForm(form).length === 0);
+  }, [form]);
+
+  function validateForm(form: formType): string[] {
     const invalidFields: string[] = [];
 
     if (formType === "signUp") {
@@ -55,7 +60,7 @@ export default function Auth() {
     }
 
     return invalidFields;
-  };
+  }
 
   const formatFullName = (firstName: string, lastName: string) => {
     const nameArray: string[] = [firstName, lastName];
@@ -71,11 +76,7 @@ export default function Auth() {
 
   const submitForm = async (ev: FormEvent) => {
     ev.preventDefault();
-    const invalidFields = validateForm();
-    if (invalidFields.length > 0) {
-      toast.error(`Invalid form please check ${invalidFields.join(", ")}`);
-      return;
-    }
+    if (validateForm(form).length > 0) return;
 
     setIsLoading("email");
 
@@ -186,7 +187,7 @@ export default function Auth() {
             schema={passwordSchema}
             errorMsg={`Password must be as least ${passwordLength} characters`}
           />
-          <SubmitBtnGreen>
+          <SubmitBtnGreen isDisabled={!isFormValid}>
             {isLoading === "email" ? (
               <LoadingSm />
             ) : (

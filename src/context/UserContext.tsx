@@ -8,6 +8,7 @@ import {
 } from "react";
 import supabase from "../supabase/supabaseClient";
 import { useNavigate } from "react-router-dom";
+import { toast } from "sonner";
 
 type UserContextProviderProps = {
   children: ReactNode;
@@ -23,7 +24,7 @@ type UserContext = {
   user: user;
   setUser: Dispatch<SetStateAction<user>>;
   getUser: () => void;
-  unsetUser: () => void;
+  signOut: () => void;
 };
 
 export const UserContext = createContext<UserContext | null>(null);
@@ -62,10 +63,20 @@ export default function UserContextProvider({
     }
   };
 
-  const unsetUser = () => setUser({ email: "", avatar_url: "", full_name: "" });
+  const signOut = async () => {
+    const { error } = await supabase.auth.signOut();
+
+    if (error) {
+      toast.error("Error while signing out, please try again");
+      return;
+    }
+
+    setUser({ email: "", avatar_url: "", full_name: "" });
+    navigate("/auth");
+  };
 
   return (
-    <UserContext.Provider value={{ user, setUser, getUser, unsetUser }}>
+    <UserContext.Provider value={{ user, setUser, getUser, signOut }}>
       {children}
     </UserContext.Provider>
   );
