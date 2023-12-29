@@ -7,6 +7,7 @@ import Loading from "./components/Loading";
 
 const Auth = lazy(() => import("./pages/Auth"));
 const DocsBoard = lazy(() => import("./pages/DocsBoard"));
+const Document = lazy(() => import("./pages/Document"));
 
 const router = createBrowserRouter([
   {
@@ -20,12 +21,20 @@ const router = createBrowserRouter([
     ),
   },
   {
-    path: "/auth",
+    path: "/document",
     element: (
       <Suspense fallback={<Loading />}>
         <UserContextProvider>
-          <Auth />
+          <Document />
         </UserContextProvider>
+      </Suspense>
+    ),
+  },
+  {
+    path: "/auth",
+    element: (
+      <Suspense fallback={<Loading />}>
+        <Auth />
       </Suspense>
     ),
   },

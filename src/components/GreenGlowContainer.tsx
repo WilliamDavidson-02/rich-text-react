@@ -11,7 +11,7 @@ export default function GreenGlowContainer({
   return (
     <div
       {...props}
-      className="border-rich-light-green bg-green-glow-radial text-rich-light-green flex flex-grow cursor-pointer items-center justify-center rounded-md border p-2"
+      className="border-rich-light-green bg-green-glow-radial text-rich-light-green flex h-full flex-grow cursor-pointer items-center justify-center rounded-md border p-2"
     >
       {children}
     </div>
