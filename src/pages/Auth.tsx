@@ -187,7 +187,7 @@ export default function Auth() {
             schema={passwordSchema}
             errorMsg={`Password must be as least ${passwordLength} characters`}
           />
-          <SubmitBtnGreen isDisabled={!isFormValid}>
+          <SubmitBtnGreen type="submit" isDisabled={!isFormValid}>
             {isLoading === "email" ? (
               <LoadingSm />
             ) : (

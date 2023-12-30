@@ -21,7 +21,7 @@ const router = createBrowserRouter([
     ),
   },
   {
-    path: "/document",
+    path: "/document/:doc_id",
     element: (
       <Suspense fallback={<Loading />}>
         <UserContextProvider>

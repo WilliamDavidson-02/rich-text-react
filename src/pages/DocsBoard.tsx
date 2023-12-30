@@ -1,5 +1,5 @@
 import { useUserContext } from "../context/UserContext";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import Navigation from "../components/Navigation";
 import MainContainer from "../components/MainContainer";
 import GreenGlowContainer from "../components/GreenGlowContainer";
@@ -8,12 +8,33 @@ import { toast } from "sonner";
 import supabase from "../supabase/supabaseClient";
 import { useNavigate } from "react-router-dom";
 
+type documentsType = {
+  id: string;
+  name: string;
+};
+
 export default function DocsBoard() {
-  const { getUser } = useUserContext();
+  const { getUser, user } = useUserContext();
+  const [documents, setDocuments] = useState<documentsType[]>([]);
   const navigate = useNavigate();
 
   useEffect(() => {
     getUser();
+
+    const getDocuments = async () => {
+      const { data, error } = await supabase
+        .from("documents")
+        .select("id, name");
+
+      if (error) {
+        toast.error("Error while getting your documents");
+        return;
+      }
+
+      setDocuments(data);
+    };
+
+    getDocuments();
   }, []);
 
   const createNewDocument = () => {
@@ -21,7 +42,7 @@ export default function DocsBoard() {
       try {
         const { data, error } = await supabase
           .from("documents")
-          .insert([{ name: "Nameless" }])
+          .insert([{ user_id: user.id }])
           .select("id");
 
         if (error) {
@@ -30,7 +51,7 @@ export default function DocsBoard() {
         }
 
         const id: string = data[0].id;
-        navigate(`/document?doc_id=${id}`);
+        navigate(`/document/${id}`);
         resolve(true);
       } catch (error) {
         reject(false);
@@ -47,11 +68,22 @@ export default function DocsBoard() {
   return (
     <MainContainer>
       <Navigation />
-      <div>
+      <div className="flex flex-wrap gap-4">
+        {documents.map((document) => (
+          <a
+            href={`document/${document.id}`}
+            className="h-[300px] w-full sm:w-[200px]"
+            key={document.id}
+          >
+            <GreenGlowContainer>
+              <div>{document.name ?? "Nameless"}</div>
+            </GreenGlowContainer>
+          </a>
+        ))}
         <div
           onClick={createNewDocument}
           title="Create a new document"
-          className="h-[300px] sm:w-[200px]"
+          className="h-[300px] w-full sm:w-[200px]"
         >
           <GreenGlowContainer>
             <Plus size={100} strokeWidth={1} />

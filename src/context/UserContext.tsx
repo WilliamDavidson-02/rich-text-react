@@ -15,6 +15,7 @@ type UserContextProviderProps = {
 };
 
 type user = {
+  id: string;
   email: string;
   avatar_url: string;
   full_name: string;
@@ -29,14 +30,12 @@ type UserContext = {
 
 export const UserContext = createContext<UserContext | null>(null);
 
+const initialUserObj = { id: "", email: "", avatar_url: "", full_name: "" };
+
 export default function UserContextProvider({
   children,
 }: UserContextProviderProps) {
-  const [user, setUser] = useState({
-    email: "",
-    avatar_url: "",
-    full_name: "",
-  });
+  const [user, setUser] = useState(initialUserObj);
   const navigate = useNavigate();
 
   const getUser = async () => {
@@ -46,17 +45,16 @@ export default function UserContextProvider({
 
     if (user) {
       const {
+        id,
         email,
         user_metadata: { avatar_url, full_name },
-      } = user!;
-      const userEmail = email ?? "";
-      const userAvatar: string = avatar_url ?? "";
-      const userName: string = full_name ?? "";
+      } = user;
 
       setUser({
-        email: userEmail,
-        avatar_url: userAvatar,
-        full_name: userName,
+        id: id ?? "",
+        email: email ?? "",
+        avatar_url: avatar_url ?? "",
+        full_name: full_name ?? "",
       });
     } else {
       navigate("/auth");
@@ -71,7 +69,7 @@ export default function UserContextProvider({
       return;
     }
 
-    setUser({ email: "", avatar_url: "", full_name: "" });
+    setUser(initialUserObj);
     navigate("/auth");
   };
 

@@ -1,6 +1,6 @@
-import { ReactNode } from "react";
+import { ButtonHTMLAttributes, ReactNode } from "react";
 
-type SubmitBtnGreenProps = {
+type SubmitBtnGreenProps = ButtonHTMLAttributes<HTMLButtonElement> & {
   children: ReactNode;
   isDisabled: boolean;
 };
@@ -8,13 +8,13 @@ type SubmitBtnGreenProps = {
 export default function SubmitBtnGreen({
   children,
   isDisabled,
+  ...props
 }: SubmitBtnGreenProps) {
   return (
     <button
+      {...props}
       disabled={isDisabled}
-      type="submit"
-      role="button"
-      className={`flex items-center justify-center rounded-md border p-2 outline-none transition duration-200 ease-in ${
+      className={`flex cursor-pointer items-center justify-center rounded-md border p-2 outline-none transition duration-200 ease-in ${
         isDisabled
           ? "border-zinc-600 bg-zinc-900 text-zinc-600"
           : "bg-rich-dark-green text-rich-light-green focus:border-rich-light-green hover:border-rich-light-green border-rich-dark-green"
