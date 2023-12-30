@@ -7,16 +7,20 @@ import supabase from "../supabase/supabaseClient";
 import { toast } from "sonner";
 import SubmitBtnGreen from "../components/SubmitBtnGreen";
 import { ArrowLeft } from "lucide-react";
+import { z } from "zod";
+import DocumentTextEditor from "../components/DocumentTextEditor";
 
-type documentType = {
+export type documentType = {
   name: string;
   content: string;
   created_date: string;
 };
 
+const nameSchema = z.string().max(64);
+
 export default function Document() {
   const { getUser } = useUserContext();
-  const { doc_id } = useParams();
+  const { doc_id = "" } = useParams();
   const navigate = useNavigate();
   const [document, setDocument] = useState<documentType>({
     name: "",
@@ -24,6 +28,7 @@ export default function Document() {
     created_date: "",
   });
   const [timer, setTimer] = useState<NodeJS.Timeout | null>(null);
+  const [isDocLoading, setIsDocLoading] = useState(true);
 
   useEffect(() => {
     getUser();
@@ -45,6 +50,7 @@ export default function Document() {
         content: content ?? "",
         created_date,
       });
+      setIsDocLoading(false);
     };
 
     getDocuments();
@@ -55,41 +61,60 @@ export default function Document() {
 
     if (timer) clearTimeout(timer);
 
-    const updateName = async () => {
-      const { error } = await supabase
-        .from("documents")
-        .update({ name: document.name })
-        .eq("id", doc_id);
+    const updateContent = () => {
+      const contentPromise = new Promise(async (resolve, reject) => {
+        try {
+          const { error } = await supabase
+            .from("documents")
+            .update({ name })
+            .eq("id", doc_id);
 
-      setTimer(null);
+          if (error) {
+            reject("Error while auto saving document name");
+            return;
+          }
 
-      if (error) {
-        toast.error("Error updating name of this document");
-        return;
-      }
+          setTimer(null);
+          resolve(true);
+        } catch (error) {
+          reject("Error while auto saving document name");
+        }
+      });
 
-      toast.success("Saved new document name");
+      toast.promise(contentPromise, {
+        loading: `Saving, ${document.name}`,
+        success: `${document.name}, saved successfully!`,
+        error: (error: string) => error,
+      });
     };
 
-    setTimer(setTimeout(() => updateName(), 5000));
+    setTimer(setTimeout(() => updateContent(), 5000));
   };
 
   return (
     <MainContainer>
       <Navigation />
-      <div>
+      <div className="flex flex-col gap-6">
         <div className="flex items-center gap-4">
-          <SubmitBtnGreen onClick={() => navigate(-1)} isDisabled={false}>
+          <SubmitBtnGreen onClick={() => navigate("/")} isDisabled={false}>
             <ArrowLeft size={20} />
           </SubmitBtnGreen>
           <input
             type="text"
             placeholder="Nameless"
-            className="border-none bg-transparent text-2xl outline-none placeholder:text-white"
+            maxLength={64}
+            className="flex-grow border-none bg-transparent text-2xl outline-none placeholder:text-white"
             value={document.name}
             onChange={(ev) => handleDocumentNameChange(ev.target.value)}
           />
         </div>
+        {!isDocLoading && (
+          <DocumentTextEditor
+            document={document}
+            setDocument={setDocument}
+            id={doc_id}
+          />
+        )}
       </div>
     </MainContainer>
   );
