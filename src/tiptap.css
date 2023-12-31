@@ -1,0 +1,42 @@
+.tiptap ul {
+  list-style-type: disc;
+  padding-left: 1em;
+}
+
+.tiptap li {
+  margin-bottom: 0.5em;
+}
+
+.tiptap h1 {
+  font-size: 2em; /* 32px */
+  font-weight: bold; /* 700 */
+}
+
+.tiptap h2 {
+  font-size: 1.5em; /* 24px */
+  font-weight: bold; /* 700 */
+}
+
+.tiptap h3 {
+  font-size: 1.17em; /* 18.72px */
+  font-weight: bold; /* 700 */
+}
+
+.tiptap h4 {
+  font-size: 1em; /* 16px */
+  font-weight: bold; /* 700 */
+}
+
+.tiptap h5 {
+  font-size: 0.83em; /* 13.28px */
+  font-weight: bold; /* 700 */
+}
+
+.tiptap h6 {
+  font-size: 0.67em; /* 10.72px */
+  font-weight: bold; /* 700 */
+}
+
+.tiptap strong {
+  font-weight: bold;
+}

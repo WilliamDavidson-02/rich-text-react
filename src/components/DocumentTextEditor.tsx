@@ -1,10 +1,13 @@
-import { BubbleMenu, EditorProvider, useCurrentEditor } from "@tiptap/react";
-import StarterKit from "@tiptap/starter-kit";
-import EditorToolbar from "./EditorToolbar";
-import { Dispatch, SetStateAction, useEffect, useState } from "react";
+import { Dispatch, SetStateAction, useState } from "react";
 import { documentType } from "../pages/Document";
 import supabase from "../supabase/supabaseClient";
 import { toast } from "sonner";
+import { EditorContent, useEditor } from "@tiptap/react";
+import StarterKit from "@tiptap/starter-kit";
+import "../tiptap.css";
+import EditorToolbar from "./EditorToolbar";
+import TextAlign from "@tiptap/extension-text-align";
+import Typography from "@tiptap/extension-typography";
 
 type DocumentTextEditorProps = {
   document: documentType;
@@ -12,14 +15,26 @@ type DocumentTextEditorProps = {
   id: string;
 };
 
-const extensions = [StarterKit];
-
 export default function DocumentTextEditor({
   document,
   setDocument,
   id,
 }: DocumentTextEditorProps) {
   const [timer, setTimer] = useState<NodeJS.Timeout | null>(null);
+  const editor = useEditor({
+    extensions: [
+      StarterKit,
+      Typography,
+      TextAlign.configure({
+        types: ["heading", "paragraph"],
+        alignments: ["left", "right", "center"],
+      }),
+    ],
+    content: document.content,
+    onUpdate: ({ editor }) => {
+      handleDocumentAutoSave(editor.getHTML());
+    },
+  });
 
   const handleDocumentAutoSave = (content: string) => {
     if (timer) clearTimeout(timer);
@@ -56,15 +71,9 @@ export default function DocumentTextEditor({
   };
 
   return (
-    <EditorProvider
-      extensions={extensions}
-      content={document.content}
-      slotBefore={<EditorToolbar />}
-      onUpdate={({ editor }) => handleDocumentAutoSave(editor.getHTML())}
-    >
-      <BubbleMenu>
-        <EditorToolbar />
-      </BubbleMenu>
-    </EditorProvider>
+    <>
+      <EditorToolbar editor={editor} />
+      <EditorContent editor={editor} />
+    </>
   );
 }

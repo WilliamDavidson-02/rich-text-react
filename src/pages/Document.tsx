@@ -62,6 +62,11 @@ export default function Document() {
     if (timer) clearTimeout(timer);
 
     const updateContent = () => {
+      if (!nameSchema.safeParse(name).success) {
+        toast.error("Name of document can be max 64 characters");
+        return;
+      }
+
       const contentPromise = new Promise(async (resolve, reject) => {
         try {
           const { error } = await supabase
@@ -94,7 +99,7 @@ export default function Document() {
   return (
     <MainContainer>
       <Navigation />
-      <div className="flex flex-col gap-6">
+      <div className="flex flex-col gap-4">
         <div className="flex items-center gap-4">
           <SubmitBtnGreen onClick={() => navigate("/")} isDisabled={false}>
             <ArrowLeft size={20} />

@@ -1,38 +1,45 @@
-import {
-  AlignCenter,
-  AlignLeft,
-  AlignRight,
-  Bold,
-  Italic,
-  Underline,
-} from "lucide-react";
+import { AlignCenter, AlignLeft, AlignRight, Bold, Italic } from "lucide-react";
 import SubmitBtnGreen from "./SubmitBtnGreen";
-import { useCurrentEditor } from "@tiptap/react";
+import { Editor } from "@tiptap/react";
 
-export default function EditorToolbar() {
-  const { editor } = useCurrentEditor();
+type EditorToolBarProps = {
+  editor: Editor | null;
+};
 
+export default function EditorToolbar({ editor }: EditorToolBarProps) {
   return (
-    <div className="flex gap-4 rounded-md bg-black p-2">
+    <div className="flex gap-4 rounded-md">
       <div className="flex gap-1">
-        <SubmitBtnGreen isDisabled={false}>
+        <SubmitBtnGreen
+          onClick={() => editor?.commands.toggleBold()}
+          isDisabled={false}
+        >
           <Bold size={16} />
         </SubmitBtnGreen>
-        <SubmitBtnGreen isDisabled={false}>
+        <SubmitBtnGreen
+          onClick={() => editor?.commands.toggleItalic()}
+          isDisabled={false}
+        >
           <Italic size={16} />
-        </SubmitBtnGreen>
-        <SubmitBtnGreen isDisabled={false}>
-          <Underline size={16} />
         </SubmitBtnGreen>
       </div>
       <div className="flex gap-1">
-        <SubmitBtnGreen isDisabled={false}>
+        <SubmitBtnGreen
+          onClick={() => editor?.commands.setTextAlign("left")}
+          isDisabled={false}
+        >
           <AlignLeft size={16} />
         </SubmitBtnGreen>
-        <SubmitBtnGreen isDisabled={false}>
+        <SubmitBtnGreen
+          onClick={() => editor?.commands.setTextAlign("center")}
+          isDisabled={false}
+        >
           <AlignCenter size={16} />
         </SubmitBtnGreen>
-        <SubmitBtnGreen isDisabled={false}>
+        <SubmitBtnGreen
+          onClick={() => editor?.commands.setTextAlign("right")}
+          isDisabled={false}
+        >
           <AlignRight size={16} />
         </SubmitBtnGreen>
       </div>
