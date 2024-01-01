@@ -8,6 +8,8 @@ import "../tiptap.css";
 import EditorToolbar from "./EditorToolbar";
 import TextAlign from "@tiptap/extension-text-align";
 import Typography from "@tiptap/extension-typography";
+import { common, createLowlight } from "lowlight";
+import CodeBlockLowlight from "@tiptap/extension-code-block-lowlight";
 
 type DocumentTextEditorProps = {
   document: documentType;
@@ -23,11 +25,16 @@ export default function DocumentTextEditor({
   const [timer, setTimer] = useState<NodeJS.Timeout | null>(null);
   const editor = useEditor({
     extensions: [
-      StarterKit,
+      StarterKit.configure({
+        codeBlock: false,
+      }),
       Typography,
       TextAlign.configure({
         types: ["heading", "paragraph"],
         alignments: ["left", "right", "center"],
+      }),
+      CodeBlockLowlight.configure({
+        lowlight: createLowlight(common),
       }),
     ],
     content: document.content,

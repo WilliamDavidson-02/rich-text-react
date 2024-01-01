@@ -41,6 +41,7 @@ export default function Document() {
 
       if (error) {
         toast.error("Error while getting document");
+        navigate("/");
         return;
       }
 
@@ -99,7 +100,7 @@ export default function Document() {
   return (
     <MainContainer>
       <Navigation />
-      <div className="flex flex-col gap-4">
+      <div className="flex flex-col gap-4 pb-16">
         <div className="flex items-center gap-4">
           <SubmitBtnGreen onClick={() => navigate("/")} isDisabled={false}>
             <ArrowLeft size={20} />
