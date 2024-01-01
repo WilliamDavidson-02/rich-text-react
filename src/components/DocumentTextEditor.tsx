@@ -10,6 +10,8 @@ import TextAlign from "@tiptap/extension-text-align";
 import Typography from "@tiptap/extension-typography";
 import { common, createLowlight } from "lowlight";
 import CodeBlockLowlight from "@tiptap/extension-code-block-lowlight";
+import TaskItem from "@tiptap/extension-task-item";
+import TaskList from "@tiptap/extension-task-list";
 
 type DocumentTextEditorProps = {
   document: documentType;
@@ -36,6 +38,8 @@ export default function DocumentTextEditor({
       CodeBlockLowlight.configure({
         lowlight: createLowlight(common),
       }),
+      TaskItem,
+      TaskList,
     ],
     content: document.content,
     onUpdate: ({ editor }) => {
