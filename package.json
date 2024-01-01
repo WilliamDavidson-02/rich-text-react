@@ -13,6 +13,7 @@
   "dependencies": {
     "@supabase/supabase-js": "^2.39.1",
     "@tiptap/extension-code-block-lowlight": "^2.1.13",
+    "@tiptap/extension-highlight": "^2.1.13",
     "@tiptap/extension-link": "^2.1.13",
     "@tiptap/extension-task-item": "^2.1.13",
     "@tiptap/extension-task-list": "^2.1.13",

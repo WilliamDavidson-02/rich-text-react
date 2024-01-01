@@ -14,6 +14,7 @@ import TaskItem from "@tiptap/extension-task-item";
 import TaskList from "@tiptap/extension-task-list";
 import Link from "@tiptap/extension-link";
 import Underline from "@tiptap/extension-underline";
+import Highlight from "@tiptap/extension-highlight";
 
 type DocumentTextEditorProps = {
   document: documentType;
@@ -29,23 +30,20 @@ export default function DocumentTextEditor({
   const [timer, setTimer] = useState<NodeJS.Timeout | null>(null);
   const editor = useEditor({
     extensions: [
-      StarterKit.configure({
-        codeBlock: false,
-      }),
+      StarterKit.configure({ codeBlock: false }),
       Typography,
       TextAlign.configure({
         types: ["heading", "paragraph"],
         alignments: ["left", "right", "center"],
       }),
-      CodeBlockLowlight.configure({
-        lowlight: createLowlight(common),
-      }),
+      CodeBlockLowlight.configure({ lowlight: createLowlight(common) }),
       TaskItem,
       TaskList,
       Link.configure({
         validate: (href) => /^https?:\/\//.test(href),
       }),
       Underline,
+      Highlight.configure({ multicolor: true }),
     ],
     content: document.content,
     onUpdate: ({ editor }) => {
