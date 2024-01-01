@@ -12,6 +12,8 @@ import { common, createLowlight } from "lowlight";
 import CodeBlockLowlight from "@tiptap/extension-code-block-lowlight";
 import TaskItem from "@tiptap/extension-task-item";
 import TaskList from "@tiptap/extension-task-list";
+import Link from "@tiptap/extension-link";
+import Underline from "@tiptap/extension-underline";
 
 type DocumentTextEditorProps = {
   document: documentType;
@@ -40,6 +42,10 @@ export default function DocumentTextEditor({
       }),
       TaskItem,
       TaskList,
+      Link.configure({
+        validate: (href) => /^https?:\/\//.test(href),
+      }),
+      Underline,
     ],
     content: document.content,
     onUpdate: ({ editor }) => {
@@ -59,7 +65,7 @@ export default function DocumentTextEditor({
             .eq("id", id);
 
           if (error) {
-            reject("Error while auto saving the document");
+            reject("Error while auto saving document");
             return;
           }
 
@@ -67,7 +73,7 @@ export default function DocumentTextEditor({
           setTimer(null);
           resolve(true);
         } catch (error) {
-          reject("Error while auto saving the document");
+          reject("Error while auto saving document");
         }
       });
 
@@ -82,9 +88,11 @@ export default function DocumentTextEditor({
   };
 
   return (
-    <>
+    <div className="flex flex-col gap-4">
       <EditorToolbar editor={editor} />
-      <EditorContent editor={editor} />
-    </>
+      <div className="scrollbar-none max-h-[calc(100vh-250px)] flex-grow overflow-auto scroll-smooth pr-2">
+        <EditorContent editor={editor} />
+      </div>
+    </div>
   );
 }

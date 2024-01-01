@@ -140,3 +140,18 @@ ul[data-type="taskList"] li ol li {
 ul[data-type="taskList"] li ul[data-type="taskList"] > li {
   display: flex;
 }
+
+.tiptap ol {
+  padding: 0 1rem;
+}
+
+.tiptap ol li::marker {
+  content: counter(list-item, decimal) ". ";
+}
+
+/* Link */
+.tiptap a {
+  color: #00cba6;
+  text-decoration: underline;
+  cursor: pointer;
+}

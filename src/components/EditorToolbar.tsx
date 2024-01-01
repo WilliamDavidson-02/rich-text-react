@@ -1,4 +1,11 @@
-import { AlignCenter, AlignLeft, AlignRight, Bold, Italic } from "lucide-react";
+import {
+  AlignCenter,
+  AlignLeft,
+  AlignRight,
+  Bold,
+  Italic,
+  Underline,
+} from "lucide-react";
 import SubmitBtnGreen from "./SubmitBtnGreen";
 import { Editor } from "@tiptap/react";
 
@@ -21,6 +28,12 @@ export default function EditorToolbar({ editor }: EditorToolBarProps) {
           isDisabled={false}
         >
           <Italic size={16} />
+        </SubmitBtnGreen>
+        <SubmitBtnGreen
+          onClick={() => editor?.commands.toggleUnderline()}
+          isDisabled={false}
+        >
+          <Underline size={16} />
         </SubmitBtnGreen>
       </div>
       <div className="flex gap-1">
