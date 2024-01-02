@@ -28,6 +28,27 @@ const Input = () => {
   );
 };
 
+const Email = () => {
+  const schema = z.string().email();
+  const [form, setForm] = useState<formType>({
+    firstName: "",
+    lastName: "",
+    email: "",
+    password: "",
+  });
+
+  return (
+    <TextInput
+      text={form.email}
+      setText={setForm}
+      placeholder="Email"
+      inputKey="email"
+      schema={schema}
+      errorMsg={"Invalid email"}
+    />
+  );
+};
+
 vi.mock("sonner", () => ({
   toast: {
     error: vi.fn(),
@@ -53,5 +74,25 @@ describe("Text input component", () => {
     fireEvent.blur(input); // trigger validation function
 
     expect(toast.error).toHaveBeenCalledWith(errorMsg);
+  });
+
+  test("input valid email", () => {
+    render(<Email />);
+
+    const input = screen.getByRole("textbox");
+    fireEvent.change(input, { target: { value: "test.component@email.com" } });
+    fireEvent.blur(input); // trigger validation function
+
+    expect(toast.error).not.toHaveBeenCalledWith("Invalid email");
+  });
+
+  test("input invalid email", () => {
+    render(<Email />);
+
+    const input = screen.getByRole("textbox");
+    fireEvent.change(input, { target: { value: "thisIsNotAValidEmail" } });
+    fireEvent.blur(input); // trigger validation function
+
+    expect(toast.error).toHaveBeenCalledWith("Invalid email");
   });
 });

@@ -17,6 +17,7 @@ import Underline from "@tiptap/extension-underline";
 import Highlight from "@tiptap/extension-highlight";
 import Color from "@tiptap/extension-color";
 import TextStyle from "@tiptap/extension-text-style";
+import Strike from "@tiptap/extension-strike";
 
 type DocumentTextEditorProps = {
   document: documentType;
@@ -60,6 +61,7 @@ export default function DocumentTextEditor({
       Highlight.configure({ multicolor: true }),
       Color,
       TextStyle,
+      Strike,
     ],
     content: document.content,
     onUpdate: ({ editor }) => {

@@ -7,6 +7,7 @@ import {
   Code,
   Highlighter,
   Italic,
+  Strikethrough,
   Underline,
 } from "lucide-react";
 import SubmitBtnGreen from "./SubmitBtnGreen";
@@ -66,8 +67,16 @@ export default function EditorToolbar({ editor }: EditorToolBarProps) {
           <Underline size={16} />
         </SubmitBtnGreen>
         <SubmitBtnGreen
+          isActive={editor?.isActive("strike") ? true : false}
+          title="Strike"
+          onClick={() => editor?.commands.toggleStrike()}
+          isDisabled={false}
+        >
+          <Strikethrough size={16} />
+        </SubmitBtnGreen>
+        <SubmitBtnGreen
           isActive={editor?.isActive("code") ? true : false}
-          title="Underline"
+          title="Code"
           onClick={() => editor?.commands.toggleCode()}
           isDisabled={false}
         >

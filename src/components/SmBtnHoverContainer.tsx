@@ -11,6 +11,7 @@ export default function SmBtnHoverContainer({
 }: SmBtnHoverContainerProps) {
   return (
     <div
+      data-testid="sm-btn-hover-container"
       className="bg-rich-dark-green text-rich-light-green hover:border-rich-light-green border-rich-dark-green cursor-pointer rounded border outline-none transition-colors duration-200 ease-in"
       onClick={onClick}
     >
