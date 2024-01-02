@@ -15,6 +15,8 @@ import TaskList from "@tiptap/extension-task-list";
 import Link from "@tiptap/extension-link";
 import Underline from "@tiptap/extension-underline";
 import Highlight from "@tiptap/extension-highlight";
+import Color from "@tiptap/extension-color";
+import TextStyle from "@tiptap/extension-text-style";
 
 type DocumentTextEditorProps = {
   document: documentType;
@@ -44,6 +46,8 @@ export default function DocumentTextEditor({
       }),
       Underline,
       Highlight.configure({ multicolor: true }),
+      Color,
+      TextStyle,
     ],
     content: document.content,
     onUpdate: ({ editor }) => {
