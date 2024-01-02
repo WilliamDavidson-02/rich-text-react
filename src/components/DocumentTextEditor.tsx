@@ -32,13 +32,25 @@ export default function DocumentTextEditor({
   const [timer, setTimer] = useState<NodeJS.Timeout | null>(null);
   const editor = useEditor({
     extensions: [
-      StarterKit.configure({ codeBlock: false }),
+      StarterKit.configure({
+        codeBlock: false,
+        code: {
+          HTMLAttributes: {
+            class: "tiptap-code",
+          },
+        },
+      }),
       Typography,
       TextAlign.configure({
         types: ["heading", "paragraph"],
         alignments: ["left", "right", "center"],
       }),
-      CodeBlockLowlight.configure({ lowlight: createLowlight(common) }),
+      CodeBlockLowlight.configure({
+        lowlight: createLowlight(common),
+        HTMLAttributes: {
+          class: "tiptap-codeblock",
+        },
+      }),
       TaskItem,
       TaskList,
       Link.configure({

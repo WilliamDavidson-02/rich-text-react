@@ -4,6 +4,7 @@ import {
   AlignRight,
   Baseline,
   Bold,
+  Code,
   Highlighter,
   Italic,
   Underline,
@@ -63,6 +64,14 @@ export default function EditorToolbar({ editor }: EditorToolBarProps) {
           isDisabled={false}
         >
           <Underline size={16} />
+        </SubmitBtnGreen>
+        <SubmitBtnGreen
+          isActive={editor?.isActive("code") ? true : false}
+          title="Underline"
+          onClick={() => editor?.commands.toggleCode()}
+          isDisabled={false}
+        >
+          <Code size={16} />
         </SubmitBtnGreen>
       </div>
       <div className="flex gap-1">
