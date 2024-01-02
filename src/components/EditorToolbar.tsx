@@ -41,6 +41,7 @@ export default function EditorToolbar({ editor }: EditorToolBarProps) {
     <div className="flex max-w-full flex-wrap gap-4 rounded-md">
       <div className="flex gap-1">
         <SubmitBtnGreen
+          isActive={editor?.isActive("bold") ? true : false}
           title="Bold"
           onClick={() => editor?.commands.toggleBold()}
           isDisabled={false}
@@ -48,6 +49,7 @@ export default function EditorToolbar({ editor }: EditorToolBarProps) {
           <Bold size={16} />
         </SubmitBtnGreen>
         <SubmitBtnGreen
+          isActive={editor?.isActive("italic") ? true : false}
           title="Italic"
           onClick={() => editor?.commands.toggleItalic()}
           isDisabled={false}
@@ -55,6 +57,7 @@ export default function EditorToolbar({ editor }: EditorToolBarProps) {
           <Italic size={16} />
         </SubmitBtnGreen>
         <SubmitBtnGreen
+          isActive={editor?.isActive("underline") ? true : false}
           title="Underline"
           onClick={() => editor?.commands.toggleUnderline()}
           isDisabled={false}
@@ -64,6 +67,7 @@ export default function EditorToolbar({ editor }: EditorToolBarProps) {
       </div>
       <div className="flex gap-1">
         <SubmitBtnGreen
+          isActive={editor?.isActive({ textAlign: "left" }) ? true : false}
           title="Align left"
           onClick={() => editor?.commands.setTextAlign("left")}
           isDisabled={false}
@@ -71,6 +75,7 @@ export default function EditorToolbar({ editor }: EditorToolBarProps) {
           <AlignLeft size={16} />
         </SubmitBtnGreen>
         <SubmitBtnGreen
+          isActive={editor?.isActive({ textAlign: "center" }) ? true : false}
           title="Align center"
           onClick={() => editor?.commands.setTextAlign("center")}
           isDisabled={false}
@@ -78,6 +83,7 @@ export default function EditorToolbar({ editor }: EditorToolBarProps) {
           <AlignCenter size={16} />
         </SubmitBtnGreen>
         <SubmitBtnGreen
+          isActive={editor?.isActive({ textAlign: "right" }) ? true : false}
           title="Align right"
           onClick={() => editor?.commands.setTextAlign("right")}
           isDisabled={false}
@@ -87,6 +93,7 @@ export default function EditorToolbar({ editor }: EditorToolBarProps) {
       </div>
       <div className="flex gap-1">
         <SubmitBtnGreen
+          isActive={false}
           title="Highlight"
           onClick={() =>
             editor?.commands.toggleHighlight({
@@ -107,6 +114,7 @@ export default function EditorToolbar({ editor }: EditorToolBarProps) {
       </div>
       <div className="flex gap-1">
         <SubmitBtnGreen
+          isActive={false}
           title="Text color"
           onClick={() => editor?.commands.setColor(textColors[textColorIndex])}
           isDisabled={false}

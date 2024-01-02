@@ -102,7 +102,11 @@ export default function Document() {
       <div className="flex max-h-screen flex-col gap-4 pb-16">
         <Navigation />
         <div className="flex items-center gap-4">
-          <SubmitBtnGreen onClick={() => navigate("/")} isDisabled={false}>
+          <SubmitBtnGreen
+            onClick={() => navigate("/")}
+            isDisabled={false}
+            isActive={false}
+          >
             <ArrowLeft size={20} />
           </SubmitBtnGreen>
           <input
