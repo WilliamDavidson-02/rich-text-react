@@ -6,9 +6,11 @@ import { useNavigate, useParams } from "react-router-dom";
 import supabase from "../supabase/supabaseClient";
 import { toast } from "sonner";
 import SubmitBtnGreen from "../components/SubmitBtnGreen";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Trash2 } from "lucide-react";
 import { z } from "zod";
 import DocumentTextEditor from "../components/DocumentTextEditor";
+import RedBtnContainer from "../components/RedBtnContainer";
+import ConfirmActionPopUp from "../components/ConfirmActionPopUp";
 
 export type documentType = {
   name: string;
@@ -29,6 +31,7 @@ export default function Document() {
   });
   const [timer, setTimer] = useState<NodeJS.Timeout | null>(null);
   const [isDocLoading, setIsDocLoading] = useState(true);
+  const [showDeleteDoc, setShowDeleteDoc] = useState(false);
 
   useEffect(() => {
     getUser();
@@ -97,35 +100,74 @@ export default function Document() {
     setTimer(setTimeout(() => updateContent(), 5000));
   };
 
+  const deleteDocument = () => {
+    const deletePromise = new Promise(async (resolve, reject) => {
+      try {
+        const { error } = await supabase
+          .from("documents")
+          .delete()
+          .eq("id", doc_id);
+
+        if (error) {
+          reject(false);
+          return;
+        }
+        setShowDeleteDoc(false);
+        navigate("/");
+        resolve(true);
+      } catch (error) {
+        reject(false);
+      }
+    });
+
+    toast.promise(deletePromise, {
+      loading: `Deleting, ${document.name}`,
+      success: `Successfully deleted ${document.name}`,
+      error: `Error while deleting, ${document.name}`,
+    });
+  };
+
   return (
-    <MainContainer>
-      <div className="flex max-h-screen flex-col gap-4 pb-16">
-        <Navigation />
-        <div className="flex items-center gap-4">
-          <SubmitBtnGreen
-            onClick={() => navigate("/")}
-            isDisabled={false}
-            isActive={false}
-          >
-            <ArrowLeft size={20} />
-          </SubmitBtnGreen>
-          <input
-            type="text"
-            placeholder="Nameless"
-            maxLength={64}
-            className="flex-grow border-none bg-transparent text-2xl outline-none placeholder:text-white"
-            value={document.name}
-            onChange={(ev) => handleDocumentNameChange(ev.target.value)}
-          />
+    <>
+      {showDeleteDoc && (
+        <ConfirmActionPopUp
+          message={`Are you sure that you want to delete ${document?.name}?`}
+          cancelAction={() => setShowDeleteDoc(false)}
+          confirmAction={deleteDocument}
+        />
+      )}
+      <MainContainer>
+        <div className="flex max-h-screen flex-col gap-4 pb-16">
+          <Navigation />
+          <div className="flex items-center gap-4">
+            <SubmitBtnGreen
+              onClick={() => navigate("/")}
+              isDisabled={false}
+              isActive={false}
+            >
+              <ArrowLeft size={20} />
+            </SubmitBtnGreen>
+            <input
+              type="text"
+              placeholder="Nameless"
+              maxLength={64}
+              className="flex-grow border-none bg-transparent text-2xl outline-none placeholder:text-white"
+              value={document.name}
+              onChange={(ev) => handleDocumentNameChange(ev.target.value)}
+            />
+            <RedBtnContainer onClick={() => setShowDeleteDoc(true)}>
+              <Trash2 size={20} />
+            </RedBtnContainer>
+          </div>
+          {!isDocLoading && (
+            <DocumentTextEditor
+              document={document}
+              setDocument={setDocument}
+              id={doc_id}
+            />
+          )}
         </div>
-        {!isDocLoading && (
-          <DocumentTextEditor
-            document={document}
-            setDocument={setDocument}
-            id={doc_id}
-          />
-        )}
-      </div>
-    </MainContainer>
+      </MainContainer>
+    </>
   );
 }

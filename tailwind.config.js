@@ -6,6 +6,7 @@ export default {
       backgroundImage: {
         "green-glow-radial":
           "radial-gradient(farthest-corner, #22796F, #01312B)",
+        "red-glow-radial": "radial-gradient(farthest-corner, #F77578, #310101)",
       },
       colors: {
         "rich-dark-purple": "#354A7B",

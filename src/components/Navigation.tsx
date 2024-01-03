@@ -10,6 +10,9 @@ export default function Navigation() {
       <div className="h-14">
         <Avatar url={user.avatar_url} />
       </div>
+      <GreenGlowContainer>
+        <span className="text-lg">Profile</span>
+      </GreenGlowContainer>
       <GreenGlowContainer onClick={signOut}>
         <span className="text-lg">Sign out</span>
       </GreenGlowContainer>
