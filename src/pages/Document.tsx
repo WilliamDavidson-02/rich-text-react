@@ -6,7 +6,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import supabase from "../supabase/supabaseClient";
 import { toast } from "sonner";
 import SubmitBtnGreen from "../components/SubmitBtnGreen";
-import { ArrowLeft, Trash2 } from "lucide-react";
+import { ArrowLeft, Save, Trash2 } from "lucide-react";
 import { z } from "zod";
 import DocumentTextEditor from "../components/DocumentTextEditor";
 import RedBtnContainer from "../components/RedBtnContainer";
@@ -29,7 +29,8 @@ export default function Document() {
     content: "",
     created_date: "",
   });
-  const [timer, setTimer] = useState<NodeJS.Timeout | null>(null);
+  const [nameTimer, setNameTimer] = useState<NodeJS.Timeout | null>(null);
+  const [contentTimer, setContentTimer] = useState<NodeJS.Timeout | null>(null);
   const [isDocLoading, setIsDocLoading] = useState(true);
   const [showDeleteDoc, setShowDeleteDoc] = useState(false);
 
@@ -60,10 +61,39 @@ export default function Document() {
     getDocuments();
   }, []);
 
+  const saveDocument = (id: string, value: any) => {
+    if (nameTimer) clearTimeout(nameTimer);
+    if (contentTimer) clearTimeout(contentTimer);
+
+    const contentPromise = new Promise(async (resolve, reject) => {
+      try {
+        const { error } = await supabase
+          .from("documents")
+          .update(value)
+          .eq("id", id);
+
+        if (error) {
+          reject(false);
+          return;
+        }
+
+        resolve(true);
+      } catch (error) {
+        reject(false);
+      }
+    });
+
+    toast.promise(contentPromise, {
+      loading: `Saving, ${document.name}`,
+      success: `${document.name}, saved successfully!`,
+      error: "Error while saving, please try again",
+    });
+  };
+
   const handleDocumentNameChange = (name: string) => {
     setDocument((prev) => ({ ...prev, name }));
 
-    if (timer) clearTimeout(timer);
+    if (nameTimer) clearTimeout(nameTimer);
 
     const updateContent = () => {
       if (!nameSchema.safeParse(name).success) {
@@ -71,33 +101,11 @@ export default function Document() {
         return;
       }
 
-      const contentPromise = new Promise(async (resolve, reject) => {
-        try {
-          const { error } = await supabase
-            .from("documents")
-            .update({ name })
-            .eq("id", doc_id);
-
-          if (error) {
-            reject("Error while auto saving document name");
-            return;
-          }
-
-          setTimer(null);
-          resolve(true);
-        } catch (error) {
-          reject("Error while auto saving document name");
-        }
-      });
-
-      toast.promise(contentPromise, {
-        loading: `Saving, ${document.name}`,
-        success: `${document.name}, saved successfully!`,
-        error: (error: string) => error,
-      });
+      saveDocument(doc_id, { name });
+      setNameTimer(null);
     };
 
-    setTimer(setTimeout(() => updateContent(), 5000));
+    setNameTimer(setTimeout(() => updateContent(), 5000));
   };
 
   const deleteDocument = () => {
@@ -141,6 +149,7 @@ export default function Document() {
           <Navigation />
           <div className="flex items-center gap-4">
             <SubmitBtnGreen
+              title="Back to documents"
               onClick={() => navigate("/")}
               isDisabled={false}
               isActive={false}
@@ -155,7 +164,23 @@ export default function Document() {
               value={document.name}
               onChange={(ev) => handleDocumentNameChange(ev.target.value)}
             />
-            <RedBtnContainer onClick={() => setShowDeleteDoc(true)}>
+            <SubmitBtnGreen
+              onClick={() =>
+                saveDocument(doc_id, {
+                  name: document.name,
+                  content: document.content,
+                })
+              }
+              title="Save"
+              isDisabled={false}
+              isActive={false}
+            >
+              <Save size={20} />
+            </SubmitBtnGreen>
+            <RedBtnContainer
+              title="Delete"
+              onClick={() => setShowDeleteDoc(true)}
+            >
               <Trash2 size={20} />
             </RedBtnContainer>
           </div>
@@ -164,6 +189,9 @@ export default function Document() {
               document={document}
               setDocument={setDocument}
               id={doc_id}
+              saveDocument={saveDocument}
+              timer={contentTimer}
+              setTimer={setContentTimer}
             />
           )}
         </div>

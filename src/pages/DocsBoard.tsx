@@ -126,13 +126,16 @@ export default function DocsBoard() {
         <Navigation />
         <div className="flex flex-wrap gap-4">
           {documents.map((document) => (
-            <div className="relative h-[300px] w-full sm:w-[200px]">
+            <div
+              key={document.id}
+              className="relative h-[300px] w-full sm:w-[200px]"
+            >
               <div className="absolute right-3 top-3">
                 <RedBtnContainer onClick={() => handleDocToDelete(document)}>
                   <Trash2 size={20} />
                 </RedBtnContainer>
               </div>
-              <a href={`document/${document.id}`} key={document.id}>
+              <a href={`document/${document.id}`}>
                 <GreenGlowContainer>
                   <div className="text-center">
                     {document.name ?? "Nameless"}

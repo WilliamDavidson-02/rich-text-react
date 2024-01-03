@@ -1,7 +1,5 @@
 import { Dispatch, SetStateAction, useState } from "react";
 import { documentType } from "../pages/Document";
-import supabase from "../supabase/supabaseClient";
-import { toast } from "sonner";
 import { EditorContent, useEditor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import "../tiptap.css";
@@ -17,20 +15,24 @@ import Underline from "@tiptap/extension-underline";
 import Highlight from "@tiptap/extension-highlight";
 import Color from "@tiptap/extension-color";
 import TextStyle from "@tiptap/extension-text-style";
-import Strike from "@tiptap/extension-strike";
 
 type DocumentTextEditorProps = {
   document: documentType;
   setDocument: Dispatch<SetStateAction<documentType>>;
   id: string;
+  saveDocument: (id: string, value: any) => void;
+  timer: NodeJS.Timeout | null;
+  setTimer: Dispatch<SetStateAction<NodeJS.Timeout | null>>;
 };
 
 export default function DocumentTextEditor({
   document,
   setDocument,
   id,
+  saveDocument,
+  timer,
+  setTimer,
 }: DocumentTextEditorProps) {
-  const [timer, setTimer] = useState<NodeJS.Timeout | null>(null);
   const editor = useEditor({
     extensions: [
       StarterKit.configure({
@@ -61,7 +63,6 @@ export default function DocumentTextEditor({
       Highlight.configure({ multicolor: true }),
       Color,
       TextStyle,
-      Strike,
     ],
     content: document.content,
     onUpdate: ({ editor }) => {
@@ -70,37 +71,16 @@ export default function DocumentTextEditor({
   });
 
   const handleDocumentAutoSave = (content: string) => {
+    setDocument((prev) => ({ ...prev, content }));
+
     if (timer) clearTimeout(timer);
 
-    const updateContent = () => {
-      const contentPromise = new Promise(async (resolve, reject) => {
-        try {
-          const { error } = await supabase
-            .from("documents")
-            .update({ content })
-            .eq("id", id);
-
-          if (error) {
-            reject("Error while auto saving document");
-            return;
-          }
-
-          setDocument((prev) => ({ ...prev, content }));
-          setTimer(null);
-          resolve(true);
-        } catch (error) {
-          reject("Error while auto saving document");
-        }
-      });
-
-      toast.promise(contentPromise, {
-        loading: `Saving, ${document.name}`,
-        success: `${document.name}, saved successfully!`,
-        error: (error: string) => error,
-      });
-    };
-
-    setTimer(setTimeout(() => updateContent(), 5000));
+    setTimer(
+      setTimeout(() => {
+        saveDocument(id, { content });
+        setTimer(null);
+      }, 5000),
+    );
   };
 
   return (
