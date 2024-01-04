@@ -16,7 +16,7 @@ export default function ConfirmActionPopUp({
   return (
     <div
       onClick={cancelAction}
-      className="fixed left-0 top-0 z-50 flex h-screen w-screen cursor-pointer items-center justify-center bg-black/30 backdrop-blur-sm"
+      className="fixed left-0 top-0 z-50 flex h-screen w-screen cursor-pointer items-center justify-center bg-black/30 px-6 backdrop-blur-sm"
     >
       <div onClick={(ev) => ev.stopPropagation()} className="max-w-[500px]">
         <GreenGlowContainer>

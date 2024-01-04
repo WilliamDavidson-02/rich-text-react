@@ -11,6 +11,7 @@ import { z } from "zod";
 import DocumentTextEditor from "../components/DocumentTextEditor";
 import RedBtnContainer from "../components/RedBtnContainer";
 import ConfirmActionPopUp from "../components/ConfirmActionPopUp";
+import { useWindowWidth } from "../hooks/useWindowSize";
 
 export type documentType = {
   name: string;
@@ -147,7 +148,7 @@ export default function Document() {
       <MainContainer>
         <div className="flex max-h-screen flex-col gap-4 pb-16">
           <Navigation />
-          <div className="flex items-center gap-4">
+          <div className="flex flex-wrap items-center gap-4">
             <SubmitBtnGreen
               title="Back to documents"
               onClick={() => navigate("/")}
@@ -161,32 +162,39 @@ export default function Document() {
             ) : (
               <input
                 type="text"
-                placeholder="Nameless"
                 maxLength={64}
                 className="flex-grow border-none bg-transparent text-2xl outline-none placeholder:text-white"
                 value={document.name}
                 onChange={(ev) => handleDocumentNameChange(ev.target.value)}
               />
             )}
-            <SubmitBtnGreen
-              onClick={() =>
-                saveDocument(doc_id, {
-                  name: document.name,
-                  content: document.content,
-                })
+            <div
+              className={
+                useWindowWidth() < 500
+                  ? "grid w-full grid-cols-2 gap-4"
+                  : "flex gap-4"
               }
-              title="Save"
-              isDisabled={false}
-              isActive={false}
             >
-              <Save size={20} />
-            </SubmitBtnGreen>
-            <RedBtnContainer
-              title="Delete"
-              onClick={() => setShowDeleteDoc(true)}
-            >
-              <Trash2 size={20} />
-            </RedBtnContainer>
+              <SubmitBtnGreen
+                onClick={() =>
+                  saveDocument(doc_id, {
+                    name: document.name,
+                    content: document.content,
+                  })
+                }
+                title="Save"
+                isDisabled={false}
+                isActive={false}
+              >
+                <Save size={20} />
+              </SubmitBtnGreen>
+              <RedBtnContainer
+                title="Delete"
+                onClick={() => setShowDeleteDoc(true)}
+              >
+                <Trash2 size={20} />
+              </RedBtnContainer>
+            </div>
           </div>
           {isDocLoading ? (
             <div className="h-[38px] flex-grow animate-pulse rounded-md bg-gradient-to-r from-rich-light-green/30 to-rich-dark-green/30" />

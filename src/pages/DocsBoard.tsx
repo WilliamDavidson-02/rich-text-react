@@ -21,8 +21,10 @@ export type documentsType = {
 export default function DocsBoard() {
   const { getUser, user } = useUserContext();
   const [documents, setDocuments] = useState<documentsType[]>([]);
+  const [savedDefaultDocs, setSavedDefaultDocs] = useState<documentsType[]>([]);
   const [showDeleteDoc, setShowDeleteDoc] = useState(false);
   const [docToDelete, setDocToDelete] = useState<documentsType | null>(null);
+  const [search, setSearch] = useState("");
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -38,8 +40,9 @@ export default function DocsBoard() {
         toast.error("Error while getting your documents");
         return;
       }
-
-      setDocuments(sortDocuments(data));
+      const sortedDocuments = sortDocuments(data);
+      setDocuments(sortedDocuments);
+      setSavedDefaultDocs(sortedDocuments);
     };
 
     getDocuments();
@@ -152,6 +155,14 @@ export default function DocsBoard() {
     setDocuments(sortDocuments(updatedDocuments));
   };
 
+  const sortDocsBySearch = (search: string) => {
+    const searchedDocs = savedDefaultDocs.filter((document) =>
+      document.name.toLowerCase().includes(search.toLowerCase()),
+    );
+    setSearch(search);
+    setDocuments(searchedDocs);
+  };
+
   return (
     <>
       {showDeleteDoc && (
@@ -165,6 +176,15 @@ export default function DocsBoard() {
       )}
       <MainContainer>
         <Navigation />
+        <form className="my-4">
+          <input
+            className="w-full rounded-md border border-rich-dark-light-green bg-black p-2 text-white transition-colors duration-300 placeholder:text-rich-dark-light-green focus:border-rich-light-green focus:placeholder:text-white"
+            placeholder="Search for document"
+            type="text"
+            value={search}
+            onChange={(ev) => sortDocsBySearch(ev.target.value)}
+          />
+        </form>
         <div className="flex flex-wrap gap-4">
           {documents.map((document) => (
             <div
@@ -191,9 +211,7 @@ export default function DocsBoard() {
               <a href={`document/${document.id}`}>
                 <GreenGlowContainer>
                   <div className="mt-auto flex h-1/2 flex-col justify-between text-center">
-                    <span className="text-lg">
-                      {document.name ?? "Nameless"}
-                    </span>
+                    <span className="text-lg">{document.name}</span>
                     <span className="text-xs">{document.created_date}</span>
                   </div>
                 </GreenGlowContainer>

@@ -86,7 +86,7 @@ export default function DocumentTextEditor({
   return (
     <div className="flex flex-col gap-4">
       <EditorToolbar editor={editor} />
-      <div className="scrollbar-none max-h-[calc(100vh-250px)] flex-grow overflow-auto scroll-smooth pr-2">
+      <div className="max-h-[calc(100vh-350px)] flex-grow overflow-auto scroll-smooth pr-2 scrollbar-none">
         <EditorContent editor={editor} />
       </div>
     </div>
