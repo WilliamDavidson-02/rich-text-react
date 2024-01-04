@@ -69,7 +69,7 @@ export default function Document() {
       try {
         const { error } = await supabase
           .from("documents")
-          .update(value)
+          .update({ ...value, last_updated: new Date().toISOString() })
           .eq("id", id);
 
         if (error) {
@@ -156,14 +156,18 @@ export default function Document() {
             >
               <ArrowLeft size={20} />
             </SubmitBtnGreen>
-            <input
-              type="text"
-              placeholder="Nameless"
-              maxLength={64}
-              className="flex-grow border-none bg-transparent text-2xl outline-none placeholder:text-white"
-              value={document.name}
-              onChange={(ev) => handleDocumentNameChange(ev.target.value)}
-            />
+            {isDocLoading ? (
+              <div className="h-[38px] flex-grow animate-pulse rounded-md bg-gradient-to-r from-rich-light-green/30 to-rich-dark-green/30" />
+            ) : (
+              <input
+                type="text"
+                placeholder="Nameless"
+                maxLength={64}
+                className="flex-grow border-none bg-transparent text-2xl outline-none placeholder:text-white"
+                value={document.name}
+                onChange={(ev) => handleDocumentNameChange(ev.target.value)}
+              />
+            )}
             <SubmitBtnGreen
               onClick={() =>
                 saveDocument(doc_id, {
@@ -184,7 +188,9 @@ export default function Document() {
               <Trash2 size={20} />
             </RedBtnContainer>
           </div>
-          {!isDocLoading && (
+          {isDocLoading ? (
+            <div className="h-[38px] flex-grow animate-pulse rounded-md bg-gradient-to-r from-rich-light-green/30 to-rich-dark-green/30" />
+          ) : (
             <DocumentTextEditor
               document={document}
               setDocument={setDocument}

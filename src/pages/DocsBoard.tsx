@@ -15,7 +15,7 @@ export type documentsType = {
   name: string;
   is_favorite: boolean;
   created_date: string;
-  last_updated: string;
+  last_updated: string | null;
 };
 
 export default function DocsBoard() {
@@ -32,18 +32,36 @@ export default function DocsBoard() {
       const { data, error } = await supabase
         .from("documents")
         .select("id, name, is_favorite, created_date, last_updated")
-        .order("is_favorite", { ascending: false });
+        .order("created_date", { ascending: false });
 
       if (error) {
         toast.error("Error while getting your documents");
         return;
       }
 
-      setDocuments(data);
+      setDocuments(sortDocuments(data));
     };
 
     getDocuments();
   }, []);
+
+  const sortDocuments = (documents: documentsType[]): documentsType[] => {
+    const sortedDocs = documents.sort((a, b) => {
+      // Sort by is favorite
+      if (a.is_favorite && !b.is_favorite) return -1;
+      if (!a.is_favorite && b.is_favorite) return 1;
+      // Sort by last updated
+      if (!a.last_updated && !b.last_updated) return 0; // a & b is null
+      if (!a.last_updated) return 1; // a is null
+      if (!b.last_updated) return -1; // b is null
+
+      return new Date(b.last_updated)
+        .toISOString()
+        .localeCompare(new Date(a.last_updated).toISOString());
+    });
+
+    return sortedDocs;
+  };
 
   const createNewDocument = () => {
     const createPromise = new Promise(async (resolve, reject) => {
@@ -127,13 +145,11 @@ export default function DocsBoard() {
       return;
     }
 
+    // Update selected doc is_favorite
     const updatedDocuments = documents.map((document) =>
       document.id === id ? { ...document, is_favorite } : document,
     );
-    const sortedDocuments = updatedDocuments.sort(
-      (a, b) => Number(b.is_favorite) - Number(a.is_favorite),
-    );
-    setDocuments(sortedDocuments);
+    setDocuments(sortDocuments(updatedDocuments));
   };
 
   return (
@@ -160,8 +176,10 @@ export default function DocsBoard() {
                   onClick={() =>
                     handleFavoriteDoc(document.id, !document.is_favorite)
                   }
-                  className={`bg-rich-dark-purple text-rich-light-purple border-rich-dark-purple hover:border-rich-light-purple flex cursor-pointer items-center justify-center rounded-md border p-2 transition-colors duration-300 ${
-                    document.is_favorite ? "border-rich-light-purple" : ""
+                  className={`flex cursor-pointer items-center justify-center rounded-md border border-rich-dark-purple bg-rich-dark-purple p-2 text-rich-purple transition-colors duration-300 hover:border-rich-light-purple hover:text-rich-light-purple ${
+                    document.is_favorite
+                      ? "border-rich-light-purple text-rich-light-purple"
+                      : ""
                   }`}
                 >
                   <Star size={20} />
@@ -172,8 +190,11 @@ export default function DocsBoard() {
               </div>
               <a href={`document/${document.id}`}>
                 <GreenGlowContainer>
-                  <div className="text-center">
-                    {document.name ?? "Nameless"}
+                  <div className="mt-auto flex h-1/2 flex-col justify-between text-center">
+                    <span className="text-lg">
+                      {document.name ?? "Nameless"}
+                    </span>
+                    <span className="text-xs">{document.created_date}</span>
                   </div>
                 </GreenGlowContainer>
               </a>

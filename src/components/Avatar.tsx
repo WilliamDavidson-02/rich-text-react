@@ -16,7 +16,7 @@ export default function Avatar({ url }: AvatarProps) {
 
   return (
     <img
-      className="h-full rounded-full object-cover object-center drop-shadow"
+      className="h-full rounded-md object-cover object-center drop-shadow"
       src={isUrlValid() ? url : "/rich-text-logo.jpg"}
       alt="avatar"
     />
