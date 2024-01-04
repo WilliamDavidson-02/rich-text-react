@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import Navigation from "../components/Navigation";
 import MainContainer from "../components/MainContainer";
 import GreenGlowContainer from "../components/GreenGlowContainer";
-import { Plus, Trash2 } from "lucide-react";
+import { Plus, Star, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import supabase from "../supabase/supabaseClient";
 import { useNavigate } from "react-router-dom";
@@ -13,6 +13,9 @@ import RedBtnContainer from "../components/RedBtnContainer";
 export type documentsType = {
   id: string;
   name: string;
+  is_favorite: boolean;
+  created_date: string;
+  last_updated: string;
 };
 
 export default function DocsBoard() {
@@ -28,7 +31,8 @@ export default function DocsBoard() {
     const getDocuments = async () => {
       const { data, error } = await supabase
         .from("documents")
-        .select("id, name");
+        .select("id, name, is_favorite, created_date, last_updated")
+        .order("is_favorite", { ascending: false });
 
       if (error) {
         toast.error("Error while getting your documents");
@@ -111,6 +115,27 @@ export default function DocsBoard() {
     setShowDeleteDoc(false);
   };
 
+  const handleFavoriteDoc = async (id: string, is_favorite: boolean) => {
+    const { error } = await supabase
+      .from("documents")
+      .update({ is_favorite })
+      .eq("id", id);
+
+    if (error) {
+      const document = documents.find((document) => document.id === id);
+      toast.error(`Error while setting ${document?.name}`);
+      return;
+    }
+
+    const updatedDocuments = documents.map((document) =>
+      document.id === id ? { ...document, is_favorite } : document,
+    );
+    const sortedDocuments = updatedDocuments.sort(
+      (a, b) => Number(b.is_favorite) - Number(a.is_favorite),
+    );
+    setDocuments(sortedDocuments);
+  };
+
   return (
     <>
       {showDeleteDoc && (
@@ -130,7 +155,17 @@ export default function DocsBoard() {
               key={document.id}
               className="relative h-[300px] w-full sm:w-[200px]"
             >
-              <div className="absolute right-3 top-3">
+              <div className="absolute top-3 flex w-full justify-between px-3">
+                <div
+                  onClick={() =>
+                    handleFavoriteDoc(document.id, !document.is_favorite)
+                  }
+                  className={`bg-rich-dark-purple text-rich-light-purple border-rich-dark-purple hover:border-rich-light-purple flex cursor-pointer items-center justify-center rounded-md border p-2 transition-colors duration-300 ${
+                    document.is_favorite ? "border-rich-light-purple" : ""
+                  }`}
+                >
+                  <Star size={20} />
+                </div>
                 <RedBtnContainer onClick={() => handleDocToDelete(document)}>
                   <Trash2 size={20} />
                 </RedBtnContainer>

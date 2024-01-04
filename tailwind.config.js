@@ -9,8 +9,9 @@ export default {
         "red-glow-radial": "radial-gradient(farthest-corner, #F77578, #310101)",
       },
       colors: {
-        "rich-dark-purple": "#354A7B",
-        "rich-purple": "#6581D4",
+        "rich-dark-purple": "#0D0131",
+        "rich-purple": "#302380",
+        "rich-light-purple": "#8F75F7",
         "rich-dark-red": "#310101",
         "rich-red": "#802323",
         "rich-light-red": "#F77578",
