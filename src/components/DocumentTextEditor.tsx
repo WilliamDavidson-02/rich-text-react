@@ -15,6 +15,11 @@ import Underline from "@tiptap/extension-underline";
 import Highlight from "@tiptap/extension-highlight";
 import Color from "@tiptap/extension-color";
 import TextStyle from "@tiptap/extension-text-style";
+import Placeholder from "@tiptap/extension-placeholder";
+import Table from "@tiptap/extension-table";
+import TableRow from "@tiptap/extension-table-row";
+import TableHeader from "@tiptap/extension-table-header";
+import TableCell from "@tiptap/extension-table-cell";
 
 type DocumentTextEditorProps = {
   document: documentType;
@@ -63,6 +68,13 @@ export default function DocumentTextEditor({
       Highlight.configure({ multicolor: true }),
       Color,
       TextStyle,
+      Placeholder.configure({
+        placeholder: "Write something here",
+      }),
+      Table.configure({ resizable: true }),
+      TableRow,
+      TableHeader,
+      TableCell,
     ],
     content: document.content,
     onUpdate: ({ editor }) => {
@@ -86,7 +98,7 @@ export default function DocumentTextEditor({
   return (
     <div className="flex flex-col gap-4">
       <EditorToolbar editor={editor} />
-      <div className="max-h-[calc(100vh-350px)] flex-grow overflow-auto scroll-smooth pr-2 scrollbar-none">
+      <div className="max-h-[calc(100vh-350px)] flex-grow overflow-auto scroll-smooth scrollbar-none">
         <EditorContent editor={editor} />
       </div>
     </div>

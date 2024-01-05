@@ -5,15 +5,22 @@ import {
   Baseline,
   Bold,
   Code,
+  Columns,
   Highlighter,
   Italic,
+  Merge,
+  Rows,
+  Split,
   Strikethrough,
+  Table,
+  Trash2,
   Underline,
 } from "lucide-react";
 import SubmitBtnGreen from "./SubmitBtnGreen";
 import { Editor } from "@tiptap/react";
 import { useState } from "react";
 import ColorPicker from "./ColorPicker";
+import RedBtnContainer from "./RedBtnContainer";
 
 type EditorToolBarProps = {
   editor: Editor | null;
@@ -146,6 +153,100 @@ export default function EditorToolbar({ editor }: EditorToolBarProps) {
           showColors={showTextColor}
           setShowColors={setShowTextColor}
         />
+      </div>
+      <div className="flex gap-1">
+        <SubmitBtnGreen
+          isActive={false}
+          title="Inert table"
+          onClick={() =>
+            editor?.commands.insertTable({
+              rows: 3,
+              cols: 3,
+              withHeaderRow: true,
+            })
+          }
+          isDisabled={false}
+        >
+          <Table size={16} />
+        </SubmitBtnGreen>
+        <RedBtnContainer
+          title="Delete table"
+          onClick={() => editor?.commands.deleteTable()}
+        >
+          <Trash2 size={16} />
+        </RedBtnContainer>
+        <SubmitBtnGreen
+          isActive={false}
+          title="Inert column"
+          onClick={() => editor?.commands.addColumnAfter()}
+          isDisabled={false}
+        >
+          <Columns size={16} />
+        </SubmitBtnGreen>
+        <SubmitBtnGreen
+          isActive={false}
+          title="Inert row"
+          onClick={() => editor?.commands.addRowAfter()}
+          isDisabled={false}
+        >
+          <Rows size={16} />
+        </SubmitBtnGreen>
+        <SubmitBtnGreen
+          isActive={false}
+          title="Delete column"
+          onClick={() => editor?.commands.deleteColumn()}
+          isDisabled={false}
+        >
+          <div className="text-xs">- col</div>
+        </SubmitBtnGreen>
+        <SubmitBtnGreen
+          isActive={false}
+          title="Delete row"
+          onClick={() => editor?.commands.deleteRow()}
+          isDisabled={false}
+        >
+          <div className="text-xs">- row</div>
+        </SubmitBtnGreen>
+        <SubmitBtnGreen
+          isActive={false}
+          title="Split cell"
+          onClick={() => editor?.commands.splitCell()}
+          isDisabled={false}
+        >
+          <Split size={16} />
+        </SubmitBtnGreen>
+        <SubmitBtnGreen
+          isActive={false}
+          title="Merge cell"
+          onClick={() => editor?.commands.mergeCells()}
+          isDisabled={false}
+        >
+          <Merge size={16} />
+        </SubmitBtnGreen>
+        <SubmitBtnGreen
+          isActive={false}
+          title="Toggle column head"
+          onClick={() => editor?.commands.toggleHeaderColumn()}
+          isDisabled={false}
+        >
+          <div className="text-xs">Head col</div>
+        </SubmitBtnGreen>
+        <SubmitBtnGreen
+          isActive={false}
+          title="Toggle row head"
+          onClick={() => editor?.commands.toggleHeaderRow()}
+          isDisabled={false}
+        >
+          <div className="text-xs">Head row</div>
+        </SubmitBtnGreen>
+        <SubmitBtnGreen
+          isActive={false}
+          title="Toggle cell head"
+          onClick={() => editor?.commands.toggleHeaderCell()}
+          isDisabled={false}
+        >
+          <div className="text-xs">Head cell</div>
+        </SubmitBtnGreen>
       </div>
     </div>
   );
